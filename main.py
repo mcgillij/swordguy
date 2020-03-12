@@ -68,6 +68,18 @@ def debug_joystick():
             hat = joystick.get_hat(i)
             print(f"Hat {i} value: {hat}")
 
+def handle_joystick(event):
+    if event.type == pygame.JOYBUTTONDOWN:
+        print("Pressed a button")
+    if event.type == pygame.JOYBUTTONUP:
+        print("Let go of a button")
+    if event.type == pygame.JOYAXISMOTION:
+        print("Moving around the axis")
+    if event.type == pygame.JOYBALLMOTION:
+        print("moving around the ball")
+    if event.type == pygame.JOYHATMOTION:
+        print("moving around the hat")
+
 if __name__ == "__main__":
     print("Starting")
     pygame.init()
@@ -89,7 +101,6 @@ if __name__ == "__main__":
     # Initialize the joysticks.
     pygame.joystick.init()
 
-
     # main
     direction = 0
     while not done:
@@ -99,13 +110,10 @@ if __name__ == "__main__":
         for event in pygame.event.get(): # User did something.
             if event.type == pygame.QUIT: # If user clicked close.
                 done = True # Flag that we are done so we exit this loop.
-            elif event.type == pygame.JOYBUTTONDOWN:
-                direction = 1
-                print("Joystick button pressed.")
-            elif event.type == pygame.JOYBUTTONUP:
-                direction = -1
-                print("Joystick button released.")
-        
+            elif event.type in [ pygame.JOYBUTTONDOWN, pygame.JOYBUTTONUP, pygame.JOYAXISMOTION, pygame.JOYBALLMOTION, pygame.JOYHATMOTION ]:
+                print("do joystick stuffs")
+                handle_joystick(event)
+
 
         mydorf.move(direction)
         # DRAW
