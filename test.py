@@ -170,7 +170,7 @@ class InputManager:
                 return True
             elif hat_status[1] > 0.5 and not self.is_hat_used(hat_index, "y", 1):
                 self.joystick_config[button] = ("is_hat", hat_index, "y", 1)
-            return True
+                return True
 
         for axis_index in range(js.get_numaxes()):
             axis_status = js.get_axis(axis_index)
