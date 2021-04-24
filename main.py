@@ -1,9 +1,10 @@
 import os
-import pygame_sdl2 as pygame
+import pygame
+
 
 def load_png(image_name):
     """ Load image and return image object """
-    fullname = os.path.join('data', image_name)
+    fullname = os.path.join("data", image_name)
 
     try:
         image = pygame.image.load(fullname)
@@ -12,9 +13,10 @@ def load_png(image_name):
         else:
             image = image.convert_alpha()
     except pygame.error as message:
-        print('Cannot load image: ', fullname)
+        print("Cannot load image: ", fullname)
         raise SystemExit(message)
     return image, image.get_rect()
+
 
 class Dorf(pygame.sprite.Sprite):
 
@@ -68,6 +70,7 @@ def debug_joystick():
             hat = joystick.get_hat(i)
             print(f"Hat {i} value: {hat}")
 
+
 def handle_joystick(event):
     if event.type == pygame.JOYBUTTONDOWN:
         print("Pressed a button")
@@ -79,6 +82,7 @@ def handle_joystick(event):
         print("moving around the ball")
     if event.type == pygame.JOYHATMOTION:
         print("moving around the hat")
+
 
 if __name__ == "__main__":
     print("Starting")
@@ -99,28 +103,37 @@ if __name__ == "__main__":
     clock = pygame.time.Clock()
 
     # Initialize the joysticks.
-    pygame.joystick.init()
+    joysticks = [
+        pygame.joystick.Joystick(x) for x in range(pygame.joystick.get_count())
+    ]
+    joystick = joysticks[0].get_init()
+    print(f"Here is the Joystick init {joystick}")
 
     # main
     direction = 0
     while not done:
         # Events
-        # Possible joystick actions: JOYAXISMOTION, JOYBALLMOTION, JOYBUTTONDOWN,
-        # JOYBUTTONUP, JOYHATMOTION
-        for event in pygame.event.get(): # User did something.
-            if event.type == pygame.QUIT: # If user clicked close.
-                done = True # Flag that we are done so we exit this loop.
-            elif event.type in [ pygame.JOYBUTTONDOWN, pygame.JOYBUTTONUP, pygame.JOYAXISMOTION, pygame.JOYBALLMOTION, pygame.JOYHATMOTION ]:
+        # Possible joystick actions: JOYAXISMOTION, JOYBALLMOTION,
+        # JOYBUTTONDOWN, JOYBUTTONUP, JOYHATMOTION
+        for event in pygame.event.get():  # User did something.
+            if event.type == pygame.QUIT:  # If user clicked close.
+                done = True  # Flag that we are done so we exit this loop.
+            elif event.type in [
+                pygame.JOYBUTTONDOWN,
+                pygame.JOYBUTTONUP,
+                pygame.JOYAXISMOTION,
+                pygame.JOYBALLMOTION,
+                pygame.JOYHATMOTION,
+            ]:
                 print("do joystick stuffs")
                 handle_joystick(event)
 
-
         mydorf.move(direction)
         # DRAW
-        screen.fill(pygame.Color("white")) # pick a default fill color
+        screen.fill(pygame.Color("white"))  # pick a default fill color
         group.update()
         group.draw(screen)
-        screen.blit(mydorf.image, (0,0))
+        screen.blit(mydorf.image, (0, 0))
 
         debug_joystick()
 
@@ -128,7 +141,6 @@ if __name__ == "__main__":
         pygame.display.flip()
 
         # Limit to 20 frames per second.
-        clock.tick(60)
+        clock.tick(20)
 
     pygame.quit()
-
