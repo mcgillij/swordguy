@@ -24,12 +24,12 @@ def load_png(image_name):
 
 class Bullet(pygame.sprite.Sprite):
     def __init__(self, rect):
-        bullet_image, bullet_rect = load_png("bullet.png")
+        bullet_image, _ = load_png("bullet.png")  # this probably needs to be only loaded once
         pygame.sprite.Sprite.__init__(self)
         self.size = 10
         self.speed = 10
         self.image = bullet_image
-        self.rect = bullet_rect
+        self.rect = rect
 
 
 class Dorf(pygame.sprite.Sprite):
@@ -306,7 +306,7 @@ def main():
 
 def process_bullets(dorf, group):
     if dorf.shooting:
-        new_bullet = Bullet(pygame.Rect(dorf.rect.centerx, dorf.rect.centery, 10, 10))
+        new_bullet = Bullet(pygame.Rect(dorf.rect.x, dorf.rect.y, 10, 10))
         group.add(new_bullet)
 
 
