@@ -37,7 +37,7 @@ def main():
     dorf_images = ["dorf.png", "dorf1.png", "dorf2.png"]
     loaded_images = [load_image(image) for image in dorf_images]
 
-    dorf = Dorf(loaded_images, loaded_images[0].get_rect())
+    dorf = Dorf(loaded_images)
     bullet_image = load_image(
         "bullet.png"
     )  # this probably needs to be only loaded once

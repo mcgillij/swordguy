@@ -1,17 +1,16 @@
 """ dorf class """
 import pygame
-from utils import load_image
 
 
 class Dorf(pygame.sprite.Sprite):
     """ Dorf class """
 
-    def __init__(self, images, rect):
+    def __init__(self, images):
         pygame.sprite.Sprite.__init__(self)
         self.speed = 4
         self.images = images
         self.image = images[0]
-        self.rect = rect
+        self.rect = images[0].get_rect()
         self.shooting = False
 
     def move_left(self):

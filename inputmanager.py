@@ -113,7 +113,6 @@ class InputManager:
         # check buttons for activity...
         for button_index in range(js.get_numbuttons()):
             button_pushed = js.get_button(button_index)
-            print(button_pushed)
             if button_pushed and not self.is_button_used(button_index):
                 self.joystick_config[button] = ("is_button", button_index)
                 return True
