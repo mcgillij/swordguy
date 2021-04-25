@@ -3,7 +3,7 @@ import time
 
 import pygame
 
-from utils import load_png
+from utils import load_image
 
 from bullet import Bullet
 from dorf import Dorf
@@ -34,9 +34,11 @@ def main():
 
     button_index = 0
 
-    dorf_image, dorf_rect = load_png("dorf.png")
-    dorf = Dorf(dorf_image, dorf_rect)
-    bullet_image, _ = load_png(
+    dorf_images = ["dorf.png", "dorf1.png", "dorf2.png"]
+    loaded_images = [load_image(image) for image in dorf_images]
+
+    dorf = Dorf(loaded_images, loaded_images[0].get_rect())
+    bullet_image = load_image(
         "bullet.png"
     )  # this probably needs to be only loaded once
 
