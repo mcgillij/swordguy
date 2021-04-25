@@ -15,12 +15,12 @@ class Dorf(pygame.sprite.Sprite):
 
     def move_left(self):
         """ Move left """
-        self.image = self.images[1]
+        self.image = pygame.transform.flip(self.images[2], True, False)
         self.rect.x -= self.speed
 
     def move_right(self):
         """ Move right """
-        self.image = self.images[2]
+        self.image = self.images[1]
         self.rect.x += self.speed
 
     def move_up(self):
@@ -30,3 +30,4 @@ class Dorf(pygame.sprite.Sprite):
     def move_down(self):
         """ Move down """
         self.rect.y += self.speed
+        self.image = pygame.transform.flip(self.images[2], False, True)
