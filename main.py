@@ -1,25 +1,75 @@
 """ Test for a bit of a joystick framework """
 import time
+import random
 
 import pygame
+import pymunk
+import pymunk.pygame_util
+from pymunk import Vec2d
 
 from utils import load_image
 
-from bullet import Bullet
+#from bullet import Bullet
 from dorf import Dorf
 from inputmanager import InputManager
+
+COLLISION_TYPES = {'ball': 1}
+
+WINDOW_WIDTH, WINDOW_HEIGHT = 1024, 768
+
+def flipy(pymunk_y, window_height):
+    """ turn pymunk_y to pygame_y """
+    return int(-pymunk_y + window_height)
+
+
+def shoot_a_ball(space, position, direction):
+    ball_body = pymunk.Body(1, float("inf"))
+    ball_body.position = position
+
+    ball_shape = pymunk.Circle(ball_body, 5)
+    ball_shape.color = pygame.Color('Green')
+    ball_shape.elasticity = 1.0
+    ball_shape.collision_type = COLLISION_TYPES['ball']
+
+    ball_body.apply_impulse_at_local_point(Vec2d(*direction))
+
+    def constant_velocity(body, gravity, damping, dt):
+        body.velocity = body.velocity.normalized() * 400
+
+    ball_body.velocity_func = constant_velocity
+    space.add(ball_body, ball_shape)
+
 
 
 def main():
     """ Main game loop """
 
-    fps = 30
+    fps = 60
+    dt = 1.0 / fps
 
     print("Plug in a USB gamepad! Press <ENTER> after you have done this.")
 
     wait_for_enter()
 
     pygame.init()
+    clock = pygame.time.Clock()
+    screen = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
+    # pymunk physics
+    space = pymunk.Space()
+    pymunk.pygame_util.positive_y_is_up = True
+    draw_options = pymunk.pygame_util.DrawOptions(screen)
+
+    static_lines = [
+        pymunk.Segment(space.static_body, (50, 50), (50, 550), 2),
+        pymunk.Segment(space.static_body, (50, 550), (550, 550), 2),
+        pymunk.Segment(space.static_body, (550, 550), (50, 50), 2),
+        pymunk.Segment(space.static_body, (50, 50), (550, 50), 2),
+    ]
+    for line in static_lines:
+        line.color = pygame.Color('lightgray')
+        line.elasticity = 1.0
+
+    space.add(*static_lines)
 
     num_joysticks = pygame.joystick.get_count()
     if num_joysticks < 1:
@@ -29,8 +79,6 @@ def main():
     # Probably need some kinda state manager
 
     input_manager = InputManager()
-
-    screen = pygame.display.set_mode((1024, 768))
 
     button_index = 0
 
@@ -64,13 +112,18 @@ def main():
                 button_index += 1
         else:
             interaction_phase(dorf, input_manager)
-            process_bullets(dorf, bullet_image, group)
+            # process_bullets(dorf, bullet_image, group)
+            process_physics_bullets(dorf, space)
             # Draw phase
             # Draw the dorf
             group.update()
             group.draw(screen)
+            # do physics with pymunk here
+            space.debug_draw(draw_options)
+            space.step(dt)
 
         pygame.display.flip()
+        clock.tick(fps)
         # maintain frame rate
         difference = start - time.time()
         delay = 1.0 / fps - difference
@@ -78,10 +131,12 @@ def main():
             time.sleep(delay)
 
 
-def process_bullets(dorf, bullet_image, group):
+def process_physics_bullets(dorf, space):
     if dorf.shooting:
-        new_bullet = Bullet(bullet_image, pygame.Rect(dorf.rect.x, dorf.rect.y, 10, 10))
-        group.add(new_bullet)
+        shoot_a_ball(space, (dorf.rect.centerx, flipy(dorf.rect.centery, WINDOW_HEIGHT)), random.choice([(1, 10), (-1, 10)]))
+#def process_bullets(dorf, bullet_image, group):
+        #new_bullet = Bullet(bullet_image, pygame.Rect(dorf.rect.x, dorf.rect.y, 10, 10))
+        #group.add(new_bullet)
 
 
 def configure_phase(screen, button, input_manager):
