@@ -9,13 +9,14 @@ from pymunk import Vec2d
 
 from utils import load_image
 
-#from bullet import Bullet
+# from bullet import Bullet
 from dorf import Dorf
 from inputmanager import InputManager
 
 COLLISION_TYPES = {'ball': 1}
 
 WINDOW_WIDTH, WINDOW_HEIGHT = 1024, 768
+
 
 def flipy(pymunk_y, window_height):
     """ turn pymunk_y to pygame_y """
@@ -38,7 +39,6 @@ def shoot_a_ball(space, position, direction):
 
     ball_body.velocity_func = constant_velocity
     space.add(ball_body, ball_shape)
-
 
 
 def main():
@@ -85,10 +85,24 @@ def main():
     dorf_images = ["dorf.png", "dorf1.png", "dorf2.png"]
     loaded_images = [load_image(image) for image in dorf_images]
 
-    dorf = Dorf(loaded_images)
-    bullet_image = load_image(
-        "bullet.png"
-    )  # this probably needs to be only loaded once
+    dorf_body = pymunk.Body(500, float('inf'))
+    dorf_body.position = Vec2d(0, 0)
+
+    size = 10
+
+    dorf_box = [(-size, -size), (-size, size), (size, size), (size, -size)]
+
+    dorf_shape = pymunk.Poly(dorf_body, dorf_box)
+#    dorf_shape.position = Vec2d(0, 0)
+    dorf_shape.collision_type = COLLISION_TYPES['ball']
+
+    dorf = Dorf(loaded_images, dorf_body)
+    # Add dorf to simulation
+    space.add(dorf_body, dorf_shape)
+
+    # bullet_image = load_image(
+    #     "bullet.png"
+    # )  # this probably needs to be only loaded once
 
     # setup sprite group for drawing
     group = pygame.sprite.Group()
@@ -134,9 +148,9 @@ def main():
 def process_physics_bullets(dorf, space):
     if dorf.shooting:
         shoot_a_ball(space, (dorf.rect.centerx, flipy(dorf.rect.centery, WINDOW_HEIGHT)), random.choice([(1, 10), (-1, 10)]))
-#def process_bullets(dorf, bullet_image, group):
-        #new_bullet = Bullet(bullet_image, pygame.Rect(dorf.rect.x, dorf.rect.y, 10, 10))
-        #group.add(new_bullet)
+# def process_bullets(dorf, bullet_image, group):
+        # new_bullet = Bullet(bullet_image, pygame.Rect(dorf.rect.x, dorf.rect.y, 10, 10))
+        # group.add(new_bullet)
 
 
 def configure_phase(screen, button, input_manager):
