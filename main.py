@@ -62,7 +62,7 @@ def main():
     static_lines = [
         pymunk.Segment(space.static_body, (50, 50), (50, 550), 2),
         pymunk.Segment(space.static_body, (50, 550), (550, 550), 2),
-        pymunk.Segment(space.static_body, (550, 550), (50, 50), 2),
+        pymunk.Segment(space.static_body, (550, 550), (550, 50), 2),
         pymunk.Segment(space.static_body, (50, 50), (550, 50), 2),
     ]
     for line in static_lines:
