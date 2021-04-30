@@ -214,4 +214,18 @@ def write_text(screen, text, x, y):
 
 
 if __name__ == "__main__":
-    main()
+    import sys
+    from scenemanager import SceneManager
+    from scenes import StartupScene, MainScene, OtherScene
+
+    pygame.init()
+    screen = pygame.display.set_mode((1280, 720))
+    scenes = {"STARTUP": StartupScene(),
+              "MAIN": MainScene(),
+              "OTHER": OtherScene()}
+
+    sm = SceneManager(screen, scenes, "STARTUP")
+    sm.run()
+    pygame.quit()
+    sys.exit()
+    # main()
