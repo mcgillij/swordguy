@@ -7,11 +7,11 @@ import pymunk
 import pymunk.pygame_util
 from pymunk import Vec2d
 
-from utils import load_image
+from .utils import load_image
 
 # from bullet import Bullet
-from dorf import Dorf
-from inputmanager import InputManager
+from .dorf import Dorf
+from .managers import InputManager
 
 COLLISION_TYPES = {'ball': 1}
 
@@ -41,7 +41,7 @@ def shoot_a_ball(space, position, direction):
     space.add(ball_body, ball_shape)
 
 
-def main():
+def old_main():
     """ Main game loop """
 
     fps = 60
@@ -213,19 +213,24 @@ def write_text(screen, text, x, y):
     screen.blit(image, (x, y - image.get_height()))
 
 
-if __name__ == "__main__":
+def main():
     import sys
-    from scenemanager import SceneManager
-    from scenes import StartupScene, MainScene, OtherScene
+    from .managers import SceneManager, InputManager
+    from .scenes.startup import StartupScene
+    from .scenes.mainscene import MainScene
 
     pygame.init()
+    inputmanager = InputManager()
     screen = pygame.display.set_mode((1280, 720))
     scenes = {"STARTUP": StartupScene(),
-              "MAIN": MainScene(),
-              "OTHER": OtherScene()}
+              "MAIN": MainScene()}
 
-    sm = SceneManager(screen, scenes, "STARTUP")
+    sm = SceneManager(screen, scenes, inputmanager, "STARTUP")
     sm.run()
     pygame.quit()
     sys.exit()
     # main()
+
+
+if __name__ == "__main__":
+    main()

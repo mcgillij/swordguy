@@ -1,6 +1,60 @@
-""" Input Manager """
+""" Managers (scene manager and input manager) """
 import pygame
 from pygame.locals import *
+
+
+class SceneManager:
+    """ used as the main state machine """
+    def __init__(self, screen, scenes, inputmanager, starting_scene):
+        self.done = False
+        self.screen = screen
+        self.clock = pygame.time.Clock()
+        self.fps = 60
+        self.scenes = scenes
+        self.scene_name = starting_scene
+        self.scene = self.scenes[self.scene_name]
+        self.inputmanager = inputmanager
+        self.scene.inputmanager = self.inputmanager
+
+    def event_loop(self):
+        """ events are passed for the current scene """
+        for event in pygame.event.get():
+            self.scene.get_event(event)
+
+    def next_scene(self):
+        """ switch to the next scene """
+        # current_scene = self.scene_name  # in the event we need to go back
+        next_scene = self.scene.next_scene
+        self.scene.done = False
+        self.scene_name = next_scene
+        persist = self.scene.persist
+        self.scene = self.scenes[self.scene_name]
+        self.scene.inputmanager = self.inputmanager
+        self.scene.startup(persist)
+        print("Am I getting called")
+        print(self.scene.persist)
+
+    def update(self, dt):
+        """ checks if there's a scene change, and update """
+
+        if self.scene.quit:
+            self.done = True
+        elif self.scene.done:
+            self.next_scene()
+        self.scene.update(dt)
+
+    def draw(self):
+        """ pass display to active scene for drawing """
+        self.scene.draw(self.screen)
+
+    def run(self):
+        """ Main while 1 loop """
+        while not self.done:
+            dt = self.clock.tick(self.fps)
+            self.event_loop()
+            self.update(dt)
+            self.draw()
+            pygame.display.update()
 
 
 class InputEvent:
