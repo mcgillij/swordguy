@@ -35,7 +35,6 @@ class StartupScene(Scene):
             self.done = True
 
     def configure_phase(self, button):
-        self.inputmanager.get_events()
         success = self.inputmanager.configure_button(button)
         print(f"Press the {button} button")
         return success

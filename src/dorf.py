@@ -3,7 +3,7 @@ import pygame
 import pymunk.pygame_util
 from pymunk import Vec2d
 
-pymunk.pygame_util.positive_y_is_up = True
+#pymunk.pygame_util.positive_y_is_up = True
 
 
 class Dorf(pygame.sprite.Sprite):

@@ -54,7 +54,8 @@ class SceneManager:
             self.event_loop()
             self.update(dt)
             self.draw()
-            pygame.display.update()
+            pygame.display.flip()
+            # pygame.display.update()
 
 
 class InputEvent:
@@ -110,22 +111,17 @@ class InputManager:
     def is_pressed(self, button):
         return self.keys_pressed[button]
 
-    # This will pump the pygame events. If this is not called every frame,
-    # then the PyGame window will start to lock up.
-    # This is basically a proxy method for pygame's event pump and will
-    # likewise return a list of event proxies.
-    def get_events(self):
+    def process_event(self, event):
         events = []
-        for event in pygame.event.get():
-            if event.type == QUIT or (event.type == KEYDOWN and event.key == K_ESCAPE):
-                self.quit_attempt = True
-            # This is where the keyboard events are checked
-            if event.type == KEYDOWN or event.type == KEYUP:
-                key_pushed_down = event.type == KEYDOWN
-                button = self.key_map.get(event.key)
-                if button is not None:
-                    events.append(InputEvent(button, key_pushed_down))
-                    self.keys_pressed[button] = key_pushed_down
+        if event.type == QUIT or (event.type == KEYDOWN and event.key == K_ESCAPE):
+            self.quit_attempt = True
+        # This is where the keyboard events are checked
+        if event.type == KEYDOWN or event.type == KEYUP:
+            key_pushed_down = event.type == KEYDOWN
+            button = self.key_map.get(event.key)
+            if button is not None:
+                events.append(InputEvent(button, key_pushed_down))
+                self.keys_pressed[button] = key_pushed_down
         # And this is where each configured button is checked...
         for button in self.buttons:
             # determine what something like "Y" actually means in terms of the joystick
