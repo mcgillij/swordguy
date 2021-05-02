@@ -31,8 +31,6 @@ class SceneManager:
         self.scene = self.scenes[self.scene_name]
         self.scene.inputmanager = self.inputmanager
         self.scene.startup(persist)
-        print("Am I getting called")
-        print(self.scene.persist)
 
     def update(self, dt):
         """ checks if there's a scene change, and update """
@@ -55,7 +53,7 @@ class SceneManager:
             self.update(dt)
             self.draw()
             pygame.display.flip()
-            # pygame.display.update()
+            # pygame.display.update()  # can be used to update only part of the screen
 
 
 class InputEvent:

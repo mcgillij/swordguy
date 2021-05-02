@@ -3,7 +3,20 @@
 import pygame
 from pygame.locals import *  # noqa: F401
 from .scene import Scene
-# from ..managers import InputManager
+
+cached_text = {}
+cached_font = None
+
+
+def write_text(screen, text, x, y):
+    global cached_text, cached_font
+    image = cached_text.get(text)
+    if image is None:
+        if cached_font is None:
+            cached_font = pygame.font.Font(pygame.font.get_default_font(), 12)
+        image = cached_font.render(text, True, (255, 255, 255))
+        cached_text[text] = image
+    screen.blit(image, (x, y - image.get_height()))
 
 
 class StartupScene(Scene):
@@ -16,6 +29,7 @@ class StartupScene(Scene):
         self.inputmanager = None
         self.button_index = 0
         print("I'm in startup")
+        self.configuration_message = ""
 
     def do_joystick_stuffs(self):
         num_joysticks = pygame.joystick.get_count()
@@ -36,12 +50,13 @@ class StartupScene(Scene):
 
     def configure_phase(self, button):
         success = self.inputmanager.configure_button(button)
-        print(f"Press the {button} button")
+        self.configuration_message = f"Press the {button} button"
         return success
 
     def draw(self, surface):
         surface.fill(pygame.Color(self.persist['screen_color']))
         surface.blit(self.title, self.title_rect)
+        write_text(surface, self.configuration_message, 20, 20)
 
     def update(self, dt):
         pass
